@@ -7,14 +7,14 @@ This application runs TorchScript serialized pretrained emotion recognition mode
 
 Let’s start with model preparation. If you are familiar with PyTorch, you probably should already know how to train and save your model. In case you don’t, we are going to use [some face detection and alignment models](https://github.com/1adrianb/face-alignment) for preprocessing and our [pretrained emotion recognition model](https://github.com/alvin870203/EmotionApp/blob/master/script_model/model/overall_net.py#L23).
 To install them, run the commands below:
-```
+```sh
 git clone https://github.com/alvin870203/EmotionApp
 cd EmotionApp/script_model/
 pip install requirements.txt
 ```
 
 To serialize and optimize the model for Android, you can use the Python scripts ([script_model.py](https://github.com/alvin870203/EmotionApp/script_model/script_model.py), [script_s3fd.py](https://github.com/alvin870203/EmotionApp/blob/master/script_model/script_s3fd.py), [script_face_alignment_net.py](https://github.com/alvin870203/EmotionApp/blob/master/script_model/script_face_alignment_net.py), [script_FaceAlignment.py](https://github.com/alvin870203/EmotionApp/blob/master/script_model/script_FaceAlignment.py), [script_EmotionRecognition.py](https://github.com/alvin870203/EmotionApp/blob/master/script_model/script_EmotionRecognition.py)) in the `script_model/` folder of EmotionApp using following commands:
-```
+```sh
 python script_model.py
 python script_s3fd.py
 python script_face_alignment_net.py
@@ -22,7 +22,7 @@ python script_FaceAlignment.py
 python script_EmotionRecognition.py
 ```
 If everything works well, we should have our scripted and optimized emotion recognition model - `EmotionRecognition_scripted.pt` generated in the `script_model/`. Then, copy it to the `app/src/main/assets` folder of EmotionApp:
-```
+```sh
 cp EmotionRecognition_scripted.pt ../app/src/main/assets/
 ```
 It will be packaged inside android application as `asset` and can be used on the device.
@@ -31,7 +31,7 @@ It will be packaged inside android application as `asset` and can be used on the
 More details about TorchScript you can find in [tutorials on pytorch.org](https://pytorch.org/docs/stable/jit.html). -->
 
 #### 1. Cloning from github
-```
+```sh
 git clone https://github.com/alvin870203/EmotionApp.git
 cd EmotionApp
 ```
@@ -66,18 +66,18 @@ Where `org.pytorch:pytorch_android_lite` is the main dependency with PyTorch And
 
 All the logic happens in [`org.pytorch.emotion.MainActivity`](https://github.com/alvin870203/EmotionApp/blob/master/app/src/main/java/org/pytorch/emotion/MainActivity.java#L31-L87).
 As a first step we read `test.jpg` to `android.graphics.Bitmap` using the standard Android API. (You can replaced it with other images provided in the assets folder or any other image for your purpose.)
-```
+```java
 Bitmap bitmap = BitmapFactory.decodeStream(getAssets().open("test.jpg"));
 ```
 
 #### 5. Loading TorchScript Model
-```
+```java
 Module module = LiteModuleLoader.load(assetFilePath(this, "EmotionRecognition_scripted.pt"));
 ```
 `org.pytorch.Module` represents `torch::jit::script::Module` that can be loaded with `load` method specifying file path to the serialized-to-file model.
 
 #### 6. Preparing Input
-```
+```java
 Tensor inputTensor = TensorImageUtils.bitmapToFloat32Tensor(bitmap,
     TensorImageUtils.TORCHVISION_NORM_MEAN_RGB, TensorImageUtils.TORCHVISION_NORM_STD_RGB);
 ```
@@ -91,7 +91,7 @@ The `TensorImageUtils#bitmapToFloat32Tensor` method creates tensors in the [torc
 
 #### 7. Run Inference
 
-```
+```java
 Tensor outputTensor = module.forward(IValue.from(inputTensor)).toTensor();
 float[] scores = outputTensor.getDataAsFloatArray();
 ```
@@ -105,7 +105,7 @@ After that we just find index with maximum score and retrieve predicted class na
 
 If there is no face detected, then the returned java array will only contain one float number.
 
-```
+```java
 String className = "";
 if ( scores.length == 1) {
   className = "No face detected";
