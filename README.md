@@ -108,17 +108,17 @@ If there is no face detected, then the returned java array will only contain one
 ```java
 String className = "";
 if ( scores.length == 1) {
-  className = "No face detected";
+    className = "No face detected";
 } else {
-  // searching for the index with maximum score
-  float maxScore = -Float.MAX_VALUE;
-  int maxScoreIdx = -1;
-  for (int i = 0; i < scores.length; i++) {
-    if (scores[i] > maxScore) {
-      maxScore = scores[i];
-      maxScoreIdx = i;
+    // searching for the index with maximum score
+    float maxScore = -Float.MAX_VALUE;
+    int maxScoreIdx = -1;
+    for (int i = 0; i < scores.length; i++) {
+        if (scores[i] > maxScore) {
+            maxScore = scores[i];
+            maxScoreIdx = i;
+        }
     }
-  }
-  className = EmotionClasses.EMOTION_CLASSES[maxScoreIdx];
+    className = EmotionClasses.EMOTION_CLASSES[maxScoreIdx];
 }
 ```
