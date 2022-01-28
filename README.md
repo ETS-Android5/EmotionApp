@@ -40,7 +40,7 @@ in that case you will be able to install Android NDK and Android SDK using Andro
 
 #### 2. Prepare Pre-build Model
 
-If you don't want to build TorchScript model from source by yourself as described in Step 0. (You probably don't need to.) Just download our pre-build scripted and optimized emotion recognition model - [`EmotionRecognition_scripted.pt`](https://drive.google.com/file/d/1ehdLKDLiIbgX1_aRjovxN_fzACtVlwoK/view?usp=sharing) from Google Drive, and place it in the [`app//src/main/assests`](https://github.com/alvin870203/EmotionApp/tree/master/app/src/main/assets) folder of EmotionApp.
+If you don't want to build TorchScript model from source by yourself as described in Step 0. (You probably don't need to.) Just download our pre-build scripted and optimized emotion recognition model - [`EmotionRecognition_scripted.pt`](https://drive.google.com/file/d/1ehdLKDLiIbgX1_aRjovxN_fzACtVlwoK/view?usp=sharing) from [Google Drive](https://drive.google.com/drive/folders/1fJ5ctg4PR28Am-CcAUTm7QYTGVGVIuam?usp=sharing), and place it in the [`app//src/main/assests`](https://github.com/alvin870203/EmotionApp/tree/master/app/src/main/assets) folder of EmotionApp.
 
 More details about TorchScript you can find in [tutorials on pytorch.org](https://pytorch.org/docs/stable/jit.html).
 
@@ -122,3 +122,6 @@ if ( scores.length == 1) {
     className = EmotionClasses.EMOTION_CLASSES[maxScoreIdx];
 }
 ```
+
+#### Screenshots
+![screenshot_test.png](/screenshots/screenshot_test.png) ![screenshot_noFace.png](/screenshots/screenshot_noFace.png)
