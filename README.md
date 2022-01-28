@@ -123,5 +123,9 @@ if ( scores.length == 1) {
 }
 ```
 
-#### Screenshots
-![screenshot_test.png](/screenshots/screenshot_test.png) ![screenshot_noFace.png](/screenshots/screenshot_noFace.png)
+## Screenshots
+<p align="center">
+  <img alt="Light" src="./screenshots/screenshot_test.png" width="45%">
+&nbsp; &nbsp; &nbsp; &nbsp;
+  <img alt="Dark" src="./screenshots/screenshot_noFace.png" width="45%">
+</p>
