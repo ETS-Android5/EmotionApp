@@ -35,7 +35,7 @@ public class MainActivity extends AppCompatActivity {
     try {
       // creating bitmap from packaged into app android asset 'image.jpg',
       // app/src/main/assets/image.jpg
-      bitmap = BitmapFactory.decodeStream(getAssets().open("surprise_Moment.jpg"));
+      bitmap = BitmapFactory.decodeStream(getAssets().open("test.jpg"));
       // loading serialized torchscript module from packaged into app android asset model.pt,
       // app/src/model/assets/model.pt
       module = LiteModuleLoader.load(assetFilePath(this, "EmotionRecognition_scripted.pt"));
@@ -54,21 +54,25 @@ public class MainActivity extends AppCompatActivity {
 
     // running the model
     final Tensor outputTensor = module.forward(IValue.from(inputTensor)).toTensor();
-//
+
     // getting tensor content as java array of floats
     final float[] scores = outputTensor.getDataAsFloatArray();
 
-    // searching for the index with maximum score
-    float maxScore = -Float.MAX_VALUE;
-    int maxScoreIdx = -1;
-    for (int i = 0; i < scores.length; i++) {
-      if (scores[i] > maxScore) {
-        maxScore = scores[i];
-        maxScoreIdx = i;
+    String className = "";
+    if ( scores.length == 1) {
+      className = "No face detected";
+    } else {
+      // searching for the index with maximum score
+      float maxScore = -Float.MAX_VALUE;
+      int maxScoreIdx = -1;
+      for (int i = 0; i < scores.length; i++) {
+        if (scores[i] > maxScore) {
+          maxScore = scores[i];
+          maxScoreIdx = i;
+        }
       }
+      className = EmotionClasses.EMOTION_CLASSES[maxScoreIdx];
     }
-
-    String className = EmotionClasses.EMOTION_CLASSES[maxScoreIdx];
 
     // ----- by me -----
     //String scoresShape = Arrays.toString(outputTensor.shape());

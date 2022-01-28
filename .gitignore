@@ -1,3 +1,7 @@
+/.idea
+*.pt
+**/__pycache__
+
 *.iml
 .gradle
 /local.properties
