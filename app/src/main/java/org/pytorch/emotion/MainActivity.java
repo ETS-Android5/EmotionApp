@@ -34,10 +34,10 @@ public class MainActivity extends AppCompatActivity {
     Module module = null;
     try {
       // creating bitmap from packaged into app android asset 'image.jpg',
-      // app/src/main/assets/image.jpg
+      // app/src/main/assets/test.jpg
       bitmap = BitmapFactory.decodeStream(getAssets().open("test.jpg"));
-      // loading serialized torchscript module from packaged into app android asset model.pt,
-      // app/src/model/assets/model.pt
+      // loading serialized torchscript module from packaged into app android asset EmotionRecognition_scripted.pt,
+      // app/src/model/assets/EmotionRecognition_scripted.pt
       module = LiteModuleLoader.load(assetFilePath(this, "EmotionRecognition_scripted.pt"));
     } catch (IOException e) {
       Log.e("PytorchEmotionApp", "Error reading assets", e);
@@ -74,17 +74,17 @@ public class MainActivity extends AppCompatActivity {
       className = EmotionClasses.EMOTION_CLASSES[maxScoreIdx];
     }
 
-    // ----- by me -----
+    // ----- for debug -----
     //String scoresShape = Arrays.toString(outputTensor.shape());
     //String inputTensorShape = Arrays.toString(inputTensor.shape());
     //float[] input = inputTensor.getDataAsFloatArray();  // getDataAsFloatArray() will flatten the inputTensor shape
     //String inputLength = Integer.toString(input.length);
-    // -----------------
+    // ---------------------
 
     // showing className on UI
     TextView textView = findViewById(R.id.text);
     textView.setText(className);
-    //textView.setText(inputLength); // by me
+    //textView.setText(inputLength); // for debug
   }
 
   /**

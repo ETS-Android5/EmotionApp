@@ -1,7 +1,7 @@
 import torch
 from torch.utils.mobile_optimizer import optimize_for_mobile
 
-face_alignment_net = torch.jit.load("C:/Users/Alvin/.cache/torch/hub/checkpoints/2DFAN4-cd938726ad.zip")
+face_alignment_net = torch.jit.load("./2DFAN4-cd938726ad.zip")
 
 input = torch.rand(1, 3, 256, 256)
 output = face_alignment_net(input)

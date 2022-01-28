@@ -1,52 +1,52 @@
 ## Quickstart
 
-[HelloWorld](https://github.com/pytorch/android-demo-app/tree/master/HelloWorldApp) is a simple image classification application that demonstrates how to use PyTorch Android API.
-This application runs TorchScript serialized TorchVision pretrained [MobileNet v3 model](https://pytorch.org/vision/stable/models.html) on static image which is packaged inside the app as android asset.
+[EmotionApp](https://github.com/alvin870203/EmotionApp) is a simple image emotion classification application that demonstrates how to embed our pretrained model for emotion recognition in your own android app.
+This application runs TorchScript serialized pretrained emotion recognition model on static image which is packaged inside the app as android asset.
 
-#### 1. Model Preparation
+<!-- #### 0. Model Preparation (Optional)
 
-Let’s start with model preparation. If you are familiar with PyTorch, you probably should already know how to train and save your model. In case you don’t, we are going to use a pre-trained image classification model(MobileNet v3), which is packaged in [TorchVision](https://pytorch.org/docs/stable/torchvision/index.html).
-To install it, run the command below:
+Let’s start with model preparation. If you are familiar with PyTorch, you probably should already know how to train and save your model. In case you don’t, we are going to use [some face detection and alignment models](https://github.com/1adrianb/face-alignment) for preprocessing and our [pretrained emotion recognition model](https://github.com/alvin870203/EmotionApp/blob/master/script_model/model/overall_net.py#L23).
+To install them, run the commands below:
 ```
-pip install torch torchvision
-```
-
-To serialize and optimize the model for Android, you can use the Python [script](https://github.com/pytorch/android-demo-app/blob/master/HelloWorldApp/trace_model.py) in the root folder of HelloWorld app:
-```
-import torch
-import torchvision
-from torch.utils.mobile_optimizer import optimize_for_mobile
-
-model = torchvision.models.mobilenet_v3_small(pretrained=True)
-model.eval()
-example = torch.rand(1, 3, 224, 224)
-traced_script_module = torch.jit.trace(model, example)
-optimized_traced_model = optimize_for_mobile(traced_script_module)
-optimized_traced_model._save_for_lite_interpreter("app/src/main/assets/model.ptl")
-```
-If everything works well, we should have our scripted and optimized model - `model.pt` generated in the assets folder of android application.
-That will be packaged inside android application as `asset` and can be used on the device.
-
-By using the new MobileNet v3 model instead of the old Resnet18 model, and by calling the `optimize_for_mobile` method on the traced model, the model inference time on a Pixel 3 gets decreased from over 230ms to about 40ms.
-
-More details about TorchScript you can find in [tutorials on pytorch.org](https://pytorch.org/docs/stable/jit.html)
-
-#### 2. Cloning from github
-```
-git clone https://github.com/pytorch/android-demo-app.git
-cd HelloWorldApp
-```
-If [Android SDK](https://developer.android.com/studio/index.html#command-tools) and [Android NDK](https://developer.android.com/ndk/downloads) are already installed you can install this application to the connected android device or emulator with:
-```
-./gradlew installDebug
+git clone https://github.com/alvin870203/EmotionApp
+cd EmotionApp/script_model/
+pip install requirements.txt
 ```
 
-We recommend you to open this project in [Android Studio 3.5.1+](https://developer.android.com/studio) (At the moment PyTorch Android and demo applications use [android gradle plugin of version 3.5.0](https://developer.android.com/studio/releases/gradle-plugin#3-5-0), which is supported only by Android Studio version 3.5.1 and higher),
+To serialize and optimize the model for Android, you can use the Python scripts ([script_model.py](https://github.com/alvin870203/EmotionApp/script_model/script_model.py), [script_s3fd.py](https://github.com/alvin870203/EmotionApp/blob/master/script_model/script_s3fd.py), [script_face_alignment_net.py](https://github.com/alvin870203/EmotionApp/blob/master/script_model/script_face_alignment_net.py), [script_FaceAlignment.py](https://github.com/alvin870203/EmotionApp/blob/master/script_model/script_FaceAlignment.py), [script_EmotionRecognition.py](https://github.com/alvin870203/EmotionApp/blob/master/script_model/script_EmotionRecognition.py)) in the `script_model/` folder of EmotionApp using following commands:
+```
+python script_model.py
+python script_s3fd.py
+python script_face_alignment_net.py
+python script_FaceAlignment.py
+python script_EmotionRecognition.py
+```
+If everything works well, we should have our scripted and optimized emotion recognition model - `EmotionRecognition_scripted.pt` generated in the `script_model/`. Then, copy it to the `app/src/main/assets` folder of EmotionApp:
+```
+cp EmotionRecognition_scripted.pt ../app/src/main/assets/
+```
+It will be packaged inside android application as `asset` and can be used on the device.
+
+
+More details about TorchScript you can find in [tutorials on pytorch.org](https://pytorch.org/docs/stable/jit.html). -->
+
+#### 1. Cloning from github
+```
+git clone https://github.com/alvin870203/EmotionApp.git
+cd EmotionApp
+```
+We recommend you to open this project in [Android Studio 3.5.1+](https://developer.android.com/studio) (At the moment PyTorch Android and demo application use [android gradle plugin of version 3.5.0](https://developer.android.com/studio/releases/gradle-plugin#3-5-0), which is supported only by Android Studio version 3.5.1 and higher),
 in that case you will be able to install Android NDK and Android SDK using Android Studio UI.
 
-#### 3. Gradle dependencies
+#### 2. Prepare Pre-build Model
 
-Pytorch android is added to the HelloWorld as [gradle dependencies](https://github.com/pytorch/android-demo-app/blob/master/HelloWorldApp/app/build.gradle#L28-L29) in build.gradle:
+If you don't want to build TorchScript model from source by yourself as described in Step 0. (You probably don't need to.) Just download our pre-build scripted and optimized emotion recognition model - [`EmotionRecognition_scripted.pt`](https://drive.google.com/drive/u/2/folders/1t_dNN9QsxpyJ89hk2f4RGDpTKJkMr8cB) from Google Drive, and place it in the [`app//src/main/assests`](https://github.com/alvin870203/EmotionApp/tree/master/app/src/main/assets) folder of EmotionApp.
+
+More details about TorchScript you can find in [tutorials on pytorch.org](https://pytorch.org/docs/stable/jit.html).
+
+#### 3. Gradle Dependencies
+
+Pytorch android is added to the EmotionApp as [gradle dependencies](https://github.com/alvin870203/EmotionApp/blob/master/app/build.gradle#L22-L23) in build.gradle:
 
 ```
 repositories {
@@ -54,28 +54,27 @@ repositories {
 }
 
 dependencies {
-    implementation 'org.pytorch:pytorch_android_lite:1.9.0'
+    implementation 'org.pytorch:pytorch_android_lite:1.10.0'
     implementation 'org.pytorch:pytorch_android_torchvision:1.9.0'
 }
 ```
-Where `org.pytorch:pytorch_android` is the main dependency with PyTorch Android API, including libtorch native library for all 4 android abis (armeabi-v7a, arm64-v8a, x86, x86_64).
-Further in this doc you can find how to rebuild it only for specific list of android abis.
+Where `org.pytorch:pytorch_android_lite` is the main dependency with PyTorch Android API, including libtorch native library for all 4 android abis (armeabi-v7a, arm64-v8a, x86, x86_64).
 
 `org.pytorch:pytorch_android_torchvision` - additional library with utility functions for converting `android.media.Image` and `android.graphics.Bitmap` to tensors.
 
-#### 4. Reading image from Android Asset
+#### 4 . Reading image from Android Asset
 
-All the logic happens in [`org.pytorch.helloworld.MainActivity`](https://github.com/pytorch/android-demo-app/blob/master/HelloWorldApp/app/src/main/java/org/pytorch/helloworld/MainActivity.java#L31-L69).
-As a first step we read `image.jpg` to `android.graphics.Bitmap` using the standard Android API.
+All the logic happens in [`org.pytorch.emotion.MainActivity`](https://github.com/alvin870203/EmotionApp/blob/master/app/src/main/java/org/pytorch/emotion/MainActivity.java#L31-L87).
+As a first step we read `test.jpg` to `android.graphics.Bitmap` using the standard Android API. (You can replaced it with other images provided in the assets folder or any other image for your purpose.)
 ```
-Bitmap bitmap = BitmapFactory.decodeStream(getAssets().open("image.jpg"));
+Bitmap bitmap = BitmapFactory.decodeStream(getAssets().open("test.jpg"));
 ```
 
-#### 5. Loading TorchScript Module
+#### 5. Loading TorchScript Model
 ```
-Module module = LiteModuleLoader.load(assetFilePath(this, "model.pt"));
+Module module = LiteModuleLoader.load(assetFilePath(this, "EmotionRecognition_scripted.pt"));
 ```
-`org.pytorch.Module` represents `torch::jit::script::Module` that can be loaded with `load` method specifying file path to the serialized to file model.
+`org.pytorch.Module` represents `torch::jit::script::Module` that can be loaded with `load` method specifying file path to the serialized-to-file model.
 
 #### 6. Preparing Input
 ```
@@ -97,24 +96,29 @@ Tensor outputTensor = module.forward(IValue.from(inputTensor)).toTensor();
 float[] scores = outputTensor.getDataAsFloatArray();
 ```
 
-`org.pytorch.Module.forward` method runs loaded module's `forward` method and gets result as `org.pytorch.Tensor` outputTensor with shape `1x1000`.
+`org.pytorch.Module.forward` method runs loaded module's `forward` method and gets result as `org.pytorch.Tensor` outputTensor with shape `1x7` if a face is detected or else with shape `1x1` if no face was detected in the image.
 
 #### 8. Processing results
-Its content is retrieved using `org.pytorch.Tensor.getDataAsFloatArray()` method that returns java array of floats with scores for every image net class.
+Its content is retrieved using `org.pytorch.Tensor.getDataAsFloatArray()` method that returns java array of floats with scores for every emotion class if a face is detected.
 
-After that we just find index with maximum score and retrieve predicted class name from `ImageNetClasses.IMAGENET_CLASSES` array that contains all ImageNet classes.
+After that we just find index with maximum score and retrieve predicted class name from `EmotionClasses.EMOTION_CLASSES` array that contains all emotion classes.
+
+If there is no face detected, then the returned java array will only contain one float number.
 
 ```
-float maxScore = -Float.MAX_VALUE;
-int maxScoreIdx = -1;
-for (int i = 0; i < scores.length; i++) {
-  if (scores[i] > maxScore) {
-    maxScore = scores[i];
-    maxScoreIdx = i;
+String className = "";
+if ( scores.length == 1) {
+  className = "No face detected";
+} else {
+  // searching for the index with maximum score
+  float maxScore = -Float.MAX_VALUE;
+  int maxScoreIdx = -1;
+  for (int i = 0; i < scores.length; i++) {
+    if (scores[i] > maxScore) {
+      maxScore = scores[i];
+      maxScoreIdx = i;
+    }
   }
+  className = EmotionClasses.EMOTION_CLASSES[maxScoreIdx];
 }
-String className = ImageNetClasses.IMAGENET_CLASSES[maxScoreIdx];
 ```
-
-In the following sections you can find detailed explanations of PyTorch Android API, code walk through for a bigger [demo application](https://github.com/pytorch/android-demo-app/tree/master/PyTorchDemoApp),
-implementation details of the API, how to customize and build it from source.
