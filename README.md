@@ -30,7 +30,7 @@ It will be packaged inside android application as `asset` and can be used on the
 
 More details about TorchScript you can find in [tutorials on pytorch.org](https://pytorch.org/docs/stable/jit.html). -->
 
-#### 1. Cloning from github
+### 1. Cloning from github
 ```sh
 git clone https://github.com/alvin870203/EmotionApp.git
 cd EmotionApp
@@ -38,13 +38,13 @@ cd EmotionApp
 We recommend you to open this project in [Android Studio 3.5.1+](https://developer.android.com/studio) (At the moment PyTorch Android and demo application use [android gradle plugin of version 3.5.0](https://developer.android.com/studio/releases/gradle-plugin#3-5-0), which is supported only by Android Studio version 3.5.1 and higher),
 in that case you will be able to install Android NDK and Android SDK using Android Studio UI.
 
-#### 2. Prepare Pre-build Model
+### 2. Prepare Pre-build Model
 
-If you don't want to build TorchScript model from source by yourself as described in Step 0. (You probably don't need to.) Just download our pre-build scripted and optimized emotion recognition model - [`EmotionRecognition_scripted.pt`](https://drive.google.com/file/d/1ehdLKDLiIbgX1_aRjovxN_fzACtVlwoK/view?usp=sharing) from [Google Drive](https://drive.google.com/drive/folders/1fJ5ctg4PR28Am-CcAUTm7QYTGVGVIuam?usp=sharing), and place it in the [`app//src/main/assests`](https://github.com/alvin870203/EmotionApp/tree/master/app/src/main/assets) folder of EmotionApp.
+If you don't want to build TorchScript model from source by yourself as described in Step 0. (You probably don't need to.) Just download our pre-build scripted and optimized emotion recognition model - [`EmotionRecognition_scripted.pt`](https://drive.google.com/file/d/1ehdLKDLiIbgX1_aRjovxN_fzACtVlwoK/view?usp=sharing) from [Google Drive](https://drive.google.com/drive/folders/1fJ5ctg4PR28Am-CcAUTm7QYTGVGVIuam?usp=sharing), and place it in the [`app/src/main/assests`](https://github.com/alvin870203/EmotionApp/tree/master/app/src/main/assets) folder of EmotionApp.
 
 More details about TorchScript you can find in [tutorials on pytorch.org](https://pytorch.org/docs/stable/jit.html).
 
-#### 3. Gradle Dependencies
+### 3. Gradle Dependencies
 
 Pytorch android is added to the EmotionApp as [gradle dependencies](https://github.com/alvin870203/EmotionApp/blob/master/app/build.gradle#L22-L23) in build.gradle:
 
@@ -62,7 +62,7 @@ Where `org.pytorch:pytorch_android_lite` is the main dependency with PyTorch And
 
 `org.pytorch:pytorch_android_torchvision` - additional library with utility functions for converting `android.media.Image` and `android.graphics.Bitmap` to tensors.
 
-#### 4 . Reading image from Android Asset
+### 4 . Reading image from Android Asset
 
 All the logic happens in [`org.pytorch.emotion.MainActivity`](https://github.com/alvin870203/EmotionApp/blob/master/app/src/main/java/org/pytorch/emotion/MainActivity.java#L31-L87).
 As a first step we read `test.jpg` to `android.graphics.Bitmap` using the standard Android API. (You can replaced it with other images provided in the assets folder or any other image for your purpose.)
@@ -70,13 +70,13 @@ As a first step we read `test.jpg` to `android.graphics.Bitmap` using the standa
 Bitmap bitmap = BitmapFactory.decodeStream(getAssets().open("test.jpg"));
 ```
 
-#### 5. Loading TorchScript Model
+### 5. Loading TorchScript Model
 ```java
 Module module = LiteModuleLoader.load(assetFilePath(this, "EmotionRecognition_scripted.pt"));
 ```
 `org.pytorch.Module` represents `torch::jit::script::Module` that can be loaded with `load` method specifying file path to the serialized-to-file model.
 
-#### 6. Preparing Input
+### 6. Preparing Input
 ```java
 Tensor inputTensor = TensorImageUtils.bitmapToFloat32Tensor(bitmap,
     TensorImageUtils.TORCHVISION_NORM_MEAN_RGB, TensorImageUtils.TORCHVISION_NORM_STD_RGB);
@@ -89,7 +89,7 @@ The `TensorImageUtils#bitmapToFloat32Tensor` method creates tensors in the [torc
 
 `inputTensor`'s shape is `1x3xHxW`, where `H` and `W` are bitmap height and width appropriately.
 
-#### 7. Run Inference
+### 7. Run Inference
 
 ```java
 Tensor outputTensor = module.forward(IValue.from(inputTensor)).toTensor();
@@ -98,7 +98,7 @@ float[] scores = outputTensor.getDataAsFloatArray();
 
 `org.pytorch.Module.forward` method runs loaded module's `forward` method and gets result as `org.pytorch.Tensor` outputTensor with shape `1x7` if a face is detected or else with shape `1x1` if no face was detected in the image.
 
-#### 8. Processing results
+### 8. Processing results
 Its content is retrieved using `org.pytorch.Tensor.getDataAsFloatArray()` method that returns java array of floats with scores for every emotion class if a face is detected.
 
 After that we just find index with maximum score and retrieve predicted class name from `EmotionClasses.EMOTION_CLASSES` array that contains all emotion classes.
@@ -122,6 +122,9 @@ if ( scores.length == 1) {
     className = EmotionClasses.EMOTION_CLASSES[maxScoreIdx];
 }
 ```
+
+## APK
+You can also download the [APK](https://drive.google.com/file/d/1gnwCMgFxC21tI4ChvmhLct978TPqYbV-/view?usp=sharing) we build to install and run the EmotionApp.
 
 ## Screenshots
 <p align="center">
